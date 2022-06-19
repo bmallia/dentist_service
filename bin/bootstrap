@@ -1,0 +1,126 @@
+#!/bin/bash
+
+#############################################################
+#name: bootstrap  ###########################################
+#description: resolve all dependencies necessary to run the
+#project
+#author: PinPeople
+#date: 06-09-2022
+############################################################
+
+print_style () {
+    case "$1" in 
+    	"info")
+         COLOR="96m"
+        ;;
+	"success")
+	 COLOR="92m"
+ 	;;
+	"warning")
+	 COLOR="93m"
+	 ;;
+	"danger")
+       	 COLOR="91m"
+	;;
+	*)
+	COLOR="0m"	
+    esac		
+
+    STARTCOLOR="\e[$COLOR";
+    ENDCOLOR="\e[0m";
+
+    printf "$STARTCOLOR%b$ENDCOLOR" "${@:2}\n";
+}
+
+warning () {
+  print_style "warning" "$@";	
+}
+
+danger () {
+ print_style "danger" "$@";
+}
+
+success () {
+ print_style "success" "$@";
+}
+
+info () {
+ print_style "info" "$@";
+ 
+}
+
+normal () {
+ print_style "normal" "$@";
+}
+
+
+function check_ruby_installed
+{
+ info "Checking if Ruby is installed .."
+ [ -z "$(ruby --version 2>/dev/null)" ] && danger "Ruby not installed! Please check setup.md file to install" && exit 0
+ 
+ LOCAL_RUBY_VERSION="$(ruby -v)"
+ RUBY_VERSION="$(cat ../.ruby-version)"
+ info "Your ruby version $LOCAL_RUBY_VERSION"
+
+ echo ${LOCAL_RUBY_VERSION} | grep --quiet "${RUBY_VERSION}"
+ [ $? = 1 ] && danger "Please install ruby version $RUBY_VERSION" && exit 0
+ success "your ruby is correct configurate"
+}
+
+function check_python_version_installed
+{
+ PYTHON_VERSION="$(python3 --version)"
+ LOCAL_PYTHON_VERSION="$(cat ../.python-version)"
+ info "your python version is $PYTHON_VERSION"
+
+ ## [ $LOCAL_PYTHON_VERSION != *"$PYTHON_VERSION"* ] && danger "Please install python version $LOCAL_PYTHON_VERSION" && exit 0
+ echo $LOCAL_PYTHON_VERSION | grep -q "$LOCAL_PYTHON"
+ [ $? = 1 ] &&  danger "Please install python version $LOCAL_PYTHON_VERSION" && exit 0
+
+success "Python version is correct configurate"
+}
+
+function install_virtual_env
+{
+  info "Installing virtual env"
+  python3 -m venv venv
+  source ../venv/bin/activate  
+}
+
+info "Setting up git message template... "
+git config commit.template .git-message-template
+
+if ! [ -x "$(command -v docker)" ] ; then 
+  info "Installing Docker ..."
+  curl -fsSL https://get.docker.com -o get-docker.sh && bash get-docker.sh
+  rm get-docker.sh
+  success "Docker installed sucessfully"
+fi
+
+compose_release() {
+  curl --silent "https://api.github.com/repos/docker/compose/releases/latest" |
+  grep -Po '"tag_name": "\K.*?(?=")'
+}
+
+
+if ! [ -x "$(command -v docker-compose)" ]; then
+  info "installing docker compose ..."
+  sudo curl -L https://github.com/docker/compose/releases/download/$(compose_release)/docker-compose-$(uname -s)-$(uname -m) \
+  -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose
+  success "docker compose installed successfuly"
+fi
+
+if [ -e $(dirname "$0")/../.ruby-version ]; then
+   check_ruby_installed
+else 
+  warning "There is no ruby-version file in the root directory"
+fi 
+
+
+if [ -e $(dirname "$0")/../.python-version ]; then
+   info "There is a python-version file in the root directory ..."
+   check_python_version_installed
+   install_virtual_env
+ 
+fi
