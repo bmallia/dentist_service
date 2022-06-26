@@ -23,15 +23,7 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = config('DATABASE_PASSWORD')
     DB_NAME: str = config('DATABASE_NAME')
     DB_USERNAME: str = config('DATABASE_USERNAME')
-
-    # AWS CONFIG
-    AWS_ACCESS_KEY: str = config('AWS_ACCESS_KEY')
-    AWS_ACCESS_SECRET: str = config('AWS_ACCESS_SECRET')
-    AWS_REGION: str = config('AWS_REGION')
-
-    AWS_ACCESS_KEY: str = config('AWS_ACCESS_KEY')
-    AWS_ACCESS_SECRET: str = config('AWS_ACCESS_SECRET')
-    AWS_REGION: str = config('AWS_REGION')
+    DEFAULT_DBNAME: str = config('DEFAULT_DBNAME')
 
 
 @lru_cache()

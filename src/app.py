@@ -15,7 +15,7 @@ from pydantic import ValidationError
 
 from src.config import get_settings
 from src.api import company
-from src.database.setup_database import Database
+from src.database.setup_database import setup
 from src.exceptions import HTTPError
 
 
@@ -33,7 +33,7 @@ def create_application() -> FastAPI:
 
         return: objeto FastAPI
     """
-    application = FastAPI(docs_url="/dentist-service")
+    application = FastAPI(docs_url="/dentist-service/docs")
     application.include_router(
         company.router,
         tags=['Company registration'],
@@ -48,7 +48,7 @@ app = create_application()
 @app.on_event("startup")
 async def startup_event():
     logger.info("Initializing database and application ...")
-    Database.setup()
+    setup()
     logger.info('Application initiliazed sucessffuly!')
 
 
