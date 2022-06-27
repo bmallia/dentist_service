@@ -34,7 +34,7 @@ def setup():
         connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = connection.cursor()
         create_db(cursor, config.DB_NAME)
-        # create_tables()
+        create_tables()
     except psycopg2.DatabaseError as e:
         raise DatabaseError(data={'message': e})
     finally:
@@ -68,3 +68,4 @@ def create_tables():  # pragma: no cover
     )
 
     ext_db.create_tables([Company])
+    Company()
