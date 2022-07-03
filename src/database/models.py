@@ -2,29 +2,33 @@ from webbrowser import get
 from peewee import Model, CharField, IntegerField, BigAutoField, FixedCharField
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
-##from src.database.db_connection import ext_db
+from src.database.db_connection import ext_db
 from src.config import get_settings
+from playhouse.postgres_ext import *
 
 config = get_settings()
 
-ext_db = PostgresqlExtDatabase(
-    config.DB_NAME,
-    host=config.DB_HOST,
-    port=config.DB_PORT,
-    user=config.DB_USERNAME,
-    password=config.DB_PASSWORD
-)
 
+class Address(Model):
+    id = PrimaryKeyField()
+    cep = IntegerField()
+    place = TextField()
+    number: TextField()
 
-class Base(Model):
     class Meta:
         database = ext_db
+        db_table = 'Address'
 
 
-class Company(Base):
-    id: BigAutoField
-    name: CharField
-    description: CharField
-    address: CharField
-    rating: IntegerField
-    phonenumber: FixedCharField(max_length=11)
+class Company(Model):
+    id = PrimaryKeyField()
+    name = TextField()
+    city = TextField(constraints=[SQL("DEFAULT 'Brasil'")])
+    phonenumber = TextField()
+    createdatetime: DateTimeField()
+    updatedatetime: DateTimeField()
+    adress: ForeignKeyField(Address)
+
+    class Meta:
+        database = ext_db
+        db_table = 'Company'

@@ -1,11 +1,11 @@
 from src.config import get_settings
-
+import contextlib
 import psycopg2
 import psycopg2.extras
 
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from playhouse.postgres_ext import *
-from src.database.models import Company
+from src.database.models import Company, Address
 from src.exceptions import DatabaseError
 
 
@@ -17,8 +17,22 @@ CON_PARAMS = {
     'password': config.DB_PASSWORD,
     'host': config.DB_HOST,
     'port': config.DB_PORT,
-    'dbname': config.DEFAULT_DBNAME,
 }
+
+
+@contextlib.contextmanager
+def connect():  # pragma: no cover
+    """ Connect with the database in a context manager
+    Yields:
+        _type_: a connection
+    """
+    try:
+        connection = psycopg2.connect(**CON_PARAMS)
+        connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        yield connection
+        connection.close()
+    except psycopg2.DatabaseError as error:
+        raise DatabaseError(data={'message': error})
 
 
 def setup():
@@ -27,18 +41,10 @@ def setup():
     Raises:
         SaatiDatabaseError: handle database errors with the correct response format
     """
-    conection = None
+    with connect() as con:
+        create_db(con.cursor(), config.DB_NAME)
 
-    try:
-        connection = psycopg2.connect(**CON_PARAMS)
-        connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        create_db(cursor, config.DB_NAME)
-        create_tables()
-    except psycopg2.DatabaseError as e:
-        raise DatabaseError(data={'message': e})
-    finally:
-        connection.close()
+    create_tables()
 
 
 def create_db(cursor, dbname: str):
@@ -53,7 +59,6 @@ def create_db(cursor, dbname: str):
     exists = cursor.fetchone()
 
     if not exists:
-        print('não existe database...   ')
         cursor.execute(f'CREATE DATABASE {dbname}')
 
 
@@ -67,5 +72,17 @@ def create_tables():  # pragma: no cover
         password=config.DB_PASSWORD
     )
 
-    ext_db.create_tables([Company])
-    Company()
+    ext_db.create_tables([Company, Address])
+
+
+def create_tables():  # pragma: no cover
+    """Create the necessary tables to the application"""
+    ext_db = PostgresqlExtDatabase(
+        config.DB_NAME,
+        host=config.DB_HOST,
+        port=config.DB_PORT,
+        user=config.DB_USERNAME,
+        password=config.DB_PASSWORD
+    )
+
+    ext_db.create_tables([Company, Address])
