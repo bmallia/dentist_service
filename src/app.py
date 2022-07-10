@@ -39,6 +39,11 @@ def create_application() -> FastAPI:
         tags=['Company registration'],
         prefix="/company"
     )
+    application.include_router(
+        company.router,
+        tags=['Address registration'],
+        prefix="/address"
+    )
     return application
 
 

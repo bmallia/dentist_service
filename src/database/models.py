@@ -1,10 +1,9 @@
-from webbrowser import get
-from peewee import Model, CharField, IntegerField, BigAutoField, FixedCharField
-from playhouse.postgres_ext import PostgresqlExtDatabase
 
+from peewee import Model,  IntegerField
 from src.database.db_connection import ext_db
 from src.config import get_settings
 from playhouse.postgres_ext import *
+from datetime import datetime
 
 config = get_settings()
 
@@ -14,6 +13,8 @@ class Address(Model):
     cep = IntegerField()
     place = TextField()
     number: TextField()
+    city = TextField()
+    coutry = TextField()
 
     class Meta:
         database = ext_db
@@ -23,9 +24,10 @@ class Address(Model):
 class Company(Model):
     id = PrimaryKeyField()
     name = TextField()
-    city = TextField(constraints=[SQL("DEFAULT 'Brasil'")])
+    about = TextField()
+    resume = TextField()
     phonenumber = TextField()
-    createdatetime: DateTimeField()
+    createdatetime: DateTimeField(default=datetime.now())
     updatedatetime: DateTimeField()
     adress: ForeignKeyField(Address)
 
