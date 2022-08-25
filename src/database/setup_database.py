@@ -41,8 +41,8 @@ def setup():
     Raises:
         SaatiDatabaseError: handle database errors with the correct response format
     """
-    with connect() as con:
-        create_db(con.cursor(), config.DB_NAME)
+    # with connect() as con:
+    ##    create_db(con.cursor(), 'dentistdb')
 
     create_tables()
 
