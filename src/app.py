@@ -33,16 +33,11 @@ def create_application() -> FastAPI:
 
         return: objeto FastAPI
     """
-    application = FastAPI(docs_url="/dentist-service/docs")
+    application = FastAPI(docs_url="/docs")
     application.include_router(
         company.router,
         tags=['Company registration'],
         prefix="/company"
-    )
-    application.include_router(
-        company.router,
-        tags=['Address registration'],
-        prefix="/address"
     )
     return application
 
