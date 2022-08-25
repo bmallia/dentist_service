@@ -1,6 +1,6 @@
 
 from peewee import Model,  IntegerField
-from src.database.db_connection import ext_db
+##from src.database.db_connection import ext_db
 from src.config import get_settings
 from playhouse.postgres_ext import *
 from datetime import datetime
@@ -17,7 +17,7 @@ class Address(Model):
     coutry = TextField()
 
     class Meta:
-        database = ext_db
+        ##database = ext_db
         db_table = 'Address'
 
 
@@ -32,5 +32,5 @@ class Company(Model):
     adress: ForeignKeyField(Address)
 
     class Meta:
-        database = ext_db
+        ##database = ext_db
         db_table = 'Company'

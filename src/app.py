@@ -15,7 +15,7 @@ from pydantic import ValidationError
 
 from src.config import get_settings
 from src.api import company
-from src.database.setup_database import setup
+##from src.database.setup_database import setup
 from src.exceptions import HTTPError
 import os
 
@@ -52,8 +52,8 @@ app = create_application()
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info('teste database: ', os.getenv('DATABASE'))
-    logger.info('teste database2: ', os.getenv('HEROKU_POSTGRESQL_RED'))
+    ##logger.info('teste database: ', os.getenv('DATABASE'))
+    ##logger.info('teste database2: ', os.getenv('HEROKU_POSTGRESQL_RED'))
     logger.info("Initializing database and application ...")
     # setup()
     logger.info('Application initiliazed sucessffuly!')

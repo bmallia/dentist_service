@@ -41,10 +41,10 @@ def setup():
     Raises:
         SaatiDatabaseError: handle database errors with the correct response format
     """
-    with connect() as con:
-        create_db(con.cursor(), config.DB_NAME)
+    # with connect() as con:
+    ##    create_db(con.cursor(), config.DB_NAME)
 
-    create_tables()
+    # create_tables()
 
 
 def create_db(cursor, dbname: str):
@@ -72,7 +72,7 @@ def create_tables():  # pragma: no cover
         password=config.DB_PASSWORD
     )
 
-    ext_db.create_tables([Company, Address])
+    ##ext_db.create_tables([Company, Address])
 
 
 def create_tables():  # pragma: no cover
@@ -85,4 +85,4 @@ def create_tables():  # pragma: no cover
         password=config.DB_PASSWORD
     )
 
-    ext_db.create_tables([Company, Address])
+    ##ext_db.create_tables([Company, Address])
