@@ -17,12 +17,6 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = config('ENVIRONMENT', 'PRD')
     API_KEY: str = config('API_KEY', '')
 
-    # DB CONFIG
-    DB_HOST: str = config('DATABASE_HOST')
-    DB_PORT: str = config('DATABASE_PORT')
-    DB_PASSWORD: str = config('DATABASE_PASSWORD')
-    DB_NAME: str = config('DATABASE_NAME')
-    DB_USERNAME: str = config('DATABASE_USERNAME')
     DEFAULT_DBNAME: str = config('DEFAULT_DBNAME')
 
 
