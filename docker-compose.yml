@@ -1,9 +1,19 @@
 version: '3'
 services:
-  py_postgres:
+  database:
     container_name: dentist_postgres
     image: 'postgres:11.5'
     ports:
       - '7000:5432'
     volumes:
       - '~/docker/data/postgresql:/var/lib/postgresql/data'
+  dentist-service:
+    container_name: dentist-service
+    build: .
+    depends_on:
+      - dentist_postgres
+    ports:
+      - '5000:5000'
+networks:
+  dentist-network:
+    driver: bridge
