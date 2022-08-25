@@ -32,7 +32,7 @@ class RetryDatabase(ReconnectMixin, PooledPostgresqlExtDatabase):
         return RetryDatabase._instance
 
 
-##ext_db = RetryDatabase.get_db_instance()
+ext_db = RetryDatabase.get_db_instance()
 
 
 def check_connection(func):
