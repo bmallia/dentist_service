@@ -1,36 +1,34 @@
-
-from peewee import Model,  IntegerField
-from src.database.db_connection import ext_db
 from src.config import get_settings
-from playhouse.postgres_ext import *
-from datetime import datetime
+from src.database.database import Base
+
+from sqlalchemy import Column, PrimaryKeyConstraint, String, BigInteger, Integer, DateTime
+from sqlalchemy.sql import func
+
 
 config = get_settings()
 
 
-class Address(Model):
-    id = PrimaryKeyField()
-    cep = IntegerField()
-    place = TextField()
-    number: TextField()
-    city = TextField()
-    coutry = TextField()
+class Address(Base):
+    __tablename__ = 'address'
 
-    class Meta:
-        database = ext_db
-        db_table = 'Address'
+    id = Column(BigInteger, primary_key=True)
+    cep = Column(Integer)
+    place = Column(String)
+    number: Column(Integer)
+    city = Column(String, nullable=True)
+    country = Column(String)
 
 
-class Company(Model):
-    id = PrimaryKeyField()
-    name = TextField()
-    about = TextField()
-    resume = TextField()
-    phonenumber = TextField()
-    createdatetime: DateTimeField(default=datetime.now())
-    updatedatetime: DateTimeField()
-    adress: ForeignKeyField(Address)
+class Company(Base):
+    __tablename__ = 'company'
 
-    class Meta:
-        database = ext_db
-        db_table = 'Company'
+    id = Column(BigInteger, primary_key=True)
+    name = Column(String)
+    about = Column(String)
+    resume = Column(String)
+    phonenumber = Column(String)
+    createdatetime: Column(DateTime(timezone=True), server_default=func.now())
+    updatedatetime: Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __repr__(self) -> str:
+        return f"id: {self.id} name: {self.name} about: {self.about} resume: {self.resume} phonenumber: {self.phonenumber}"

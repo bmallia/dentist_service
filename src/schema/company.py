@@ -6,4 +6,3 @@ class Company(BaseModel):
     about: str
     resume: str
     phonenumber: int
-    address_id: int
